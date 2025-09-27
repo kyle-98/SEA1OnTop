@@ -1,10 +1,12 @@
 ﻿using SEA1OnTop.Settings;
 using SEA1OnTop.Utils;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace SEA1OnTop
 {
@@ -15,6 +17,8 @@ namespace SEA1OnTop
           private Canvas _canvas;
           private bool _isScrolling = false;
           private AppSettings _currentSettings;
+          private DateTime _lastDateUpdate = DateTime.MinValue;
+          private DispatcherTimer _dateTimer;
 
 
           public MainWindow()
@@ -29,6 +33,13 @@ namespace SEA1OnTop
 
                Closing += OnClosing;
                MouseDown += Bar_MouseDown;
+
+               _dateTimer = new DispatcherTimer
+               {
+                    Interval = TimeSpan.FromSeconds(1)
+               };
+               _dateTimer.Tick += (s, e) => UpdateTextBlockContent();
+               _dateTimer.Start();
           }
 
 
@@ -125,9 +136,74 @@ namespace SEA1OnTop
                     _textBlock.VerticalAlignment = VerticalAlignment.Center;
                }
 
+               UpdateTextBlockContent();
+
                Screen? screen = Helpers.GetScreen(_currentSettings.MonitorIndex);
 
                SEAIBarHelper.RegisterBar(this, _currentSettings.BarHeight, screen.Bounds.Left, screen.Bounds.Top, screen.Bounds.Width);
+          }
+
+
+
+          private void UpdateTextBlockContent()
+          {
+               string text = _currentSettings.Text ?? string.Empty;
+
+               // Match %date-FORMAT|TIMEZONE%
+
+               /*
+                * Examples:
+                *   %date-hh:mm tt|Eastern Standard Time%
+                *   %date-HH:mm:ss|Pacific Standard Time%
+                *   %date-yyyy-MM-dd HH:mm:ss|UTC%
+                */
+               var matches = System.Text.RegularExpressions.Regex.Matches(text, "%date-(.*?)%");
+
+               foreach (System.Text.RegularExpressions.Match match in matches)
+               {
+                    string inside = match.Groups[1].Value;
+                    string format = inside;
+                    string? timeZoneId = null;
+
+                    if (inside.Contains('|'))
+                    {
+                         var parts = inside.Split('|');
+                         format = parts[0];
+                         timeZoneId = parts.Length > 1 ? parts[1] : null;
+                    }
+
+                    DateTime dateTime = DateTime.Now;
+
+                    if (!string.IsNullOrEmpty(timeZoneId))
+                    {
+                         try
+                         {
+                              var tz = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                              dateTime = TimeZoneInfo.ConvertTime(DateTime.Now, tz);
+                         }
+                         catch { }
+                         
+                    }
+
+                    string replacement;
+                    try
+                    {
+                         replacement = dateTime.ToString(format);
+                    }
+                    catch
+                    {
+                         replacement = match.Value;
+                    }
+
+                    text = text.Replace(match.Value, replacement);
+               }
+
+               if (text.Contains("%date%"))
+               {
+                    text = text.Replace("%date%", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+               }
+
+               _textBlock.Text = text;
           }
 
 
@@ -135,9 +211,15 @@ namespace SEA1OnTop
           {
                if (_textBlock == null || _canvas == null) return;
 
-               double speed = 2;
+               if ((DateTime.Now - _lastDateUpdate).TotalSeconds >= 1)
+               {
+                    _lastDateUpdate = DateTime.Now;
+                    UpdateTextBlockContent();
+               }
 
+               double speed = 2;
                _textPosition += speed;
+
                if (_textPosition > ActualWidth)
                     _textPosition = -_textBlock.DesiredSize.Width;
 
