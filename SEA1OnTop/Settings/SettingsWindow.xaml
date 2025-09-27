@@ -28,11 +28,23 @@
                <TextBlock Text="Text to display:" Margin="0,10,0,0"/>
                <TextBox Name="DisplayTextBox" />
 
+               <TextBlock Text="Text Color:" Margin="0,10,0,0"/>
+               <StackPanel Orientation="Horizontal" Margin="0,5">
+                    <TextBox x:Name="TextColorTextBox"  IsReadOnly="True" Width="200"/>
+                    <Button Content="Pick Color" Width="100" Margin="10,0,0,0" Click="PickTextColor_Click"/>
+               </StackPanel>
+
                <TextBlock Text="Font:" Margin="0,10,0,0"/>
                <ComboBox Name="FontComboBox" IsEditable="True" Width="250" Margin="0,5,0,0" />
 
                <TextBlock Text="Font Size:" Margin="0,10,0,0"/>
                <TextBox Name="FontSizeTextBox" Width="100" Margin="0,5,0,0"/>
+
+               <Label Content="Scroll Direction:" Margin="0,10,0,0"/>
+               <ComboBox x:Name="ScrollDirectionComboBox" Width="250" Margin="0,5,0,0">
+                    <ComboBoxItem Content="Right to Left" Tag="RightToLeft"/>
+                    <ComboBoxItem Content="Left to Right" Tag="LeftToRight"/>
+               </ComboBox>
 
                <TextBlock Text="Monitor:" Margin="0,10,0,0"/>
                <ComboBox Name="MonitorComboBox" Width="250" Margin="0,5,0,0"/>

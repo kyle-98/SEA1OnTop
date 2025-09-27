@@ -3,6 +3,13 @@ using System.Text.Json;
 
 namespace SEA1OnTop.Settings
 {
+
+     public enum ScrollDirection
+     {
+          LeftToRight,
+          RightToLeft
+     }
+
      public class AppSettings
      {
           public int BarHeight { get; set; } = 40;                  
@@ -12,6 +19,8 @@ namespace SEA1OnTop.Settings
           public int MonitorIndex { get; set; } = 0;
           public string FontFamilyName { get; set; } = "Segoe UI";
           public int FontSize { get; set; } = 16;
+          public string TextColor { get; set; } = "#FFFFFFFF";
+          public ScrollDirection TextScrollDirection { get; set; } = ScrollDirection.RightToLeft;
 
      }
 

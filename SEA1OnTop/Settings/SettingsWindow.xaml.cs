@@ -21,6 +21,8 @@ namespace SEA1OnTop
                DisplayTextBox.Text = _settings.Text;
                ScrollTextCheckBox.IsChecked = _settings.ScrollText;
                FontSizeTextBox.Text = _settings.FontSize.ToString();
+               TextColorTextBox.Text = _settings.TextColor.ToString();
+               ScrollDirectionComboBox.SelectedIndex = _settings.TextScrollDirection == ScrollDirection.RightToLeft ? 0 : 1;
 
                PopulateMonitorDropdown();
                PopulateFontComboBox();
@@ -45,7 +47,14 @@ namespace SEA1OnTop
                          _settings.MonitorIndex = MonitorComboBox.SelectedIndex;
                     }
 
+                    if (ScrollDirectionComboBox.SelectedItem is ComboBoxItem item &&
+                         Enum.TryParse<ScrollDirection>(item.Tag.ToString(), out var direction))
+                    {
+                         _settings.TextScrollDirection = direction;
+                    }
+
                     _settings.FontFamilyName = FontComboBox.Text;
+                    _settings.TextColor = TextColorTextBox.Text;
 
                     if (!int.TryParse(FontSizeTextBox.Text, out int size))
                          size = 16;
@@ -121,6 +130,16 @@ namespace SEA1OnTop
                }
 
                FontComboBox.Text = _settings.FontFamilyName;
+          }
+
+          private void PickTextColor_Click(object sender, RoutedEventArgs e)
+          {
+               var cd = new ColorDialog();
+               if (cd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+               {
+                    var color = cd.Color;
+                    TextColorTextBox.Text = $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}";
+               }
           }
      }
 }

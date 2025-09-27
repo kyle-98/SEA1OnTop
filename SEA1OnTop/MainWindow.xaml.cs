@@ -1,7 +1,6 @@
 ﻿using SEA1OnTop.Settings;
 using SEA1OnTop.Utils;
 using System.ComponentModel;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -96,24 +95,17 @@ namespace SEA1OnTop
           {
                _currentSettings = settings;
 
-               if (_isScrolling)
-               {
-                    CompositionTarget.Rendering -= ScrollTextFrame;
-                    _isScrolling = false;
-               }
-
-               try { Background = (SolidColorBrush)new BrushConverter().ConvertFromString(settings.BackgroundColor); }
+               try { Background = (SolidColorBrush)new BrushConverter().ConvertFromString(_currentSettings.BackgroundColor); }
                catch { Background = System.Windows.Media.Brushes.Red; }
 
                _textBlock = new TextBlock
                {
-                    Text = settings.Text,
-                    Foreground = System.Windows.Media.Brushes.White,
-                    FontSize = 16
+                    Text = _currentSettings.Text,
+                    Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString(_currentSettings.TextColor),
+                    FontSize = _currentSettings.FontSize,
+                    FontFamily = new System.Windows.Media.FontFamily(_currentSettings.FontFamilyName)
                };
-
-               _textBlock.FontFamily = new System.Windows.Media.FontFamily(settings.FontFamilyName);
-               _textBlock.FontSize = settings.FontSize;
+               
 
                if (_currentSettings.ScrollText)
                {
@@ -124,7 +116,18 @@ namespace SEA1OnTop
                     _textBlock.Measure(new System.Windows.Size(Double.PositiveInfinity, Double.PositiveInfinity));
                     double textWidth = _textBlock.DesiredSize.Width;
 
-                    _textPosition = -textWidth;
+                    if (_currentSettings.TextScrollDirection == ScrollDirection.RightToLeft)
+                    {
+                         _textPosition = ActualWidth;
+                    }
+                    else
+                    {
+                         _textPosition = -textWidth;
+                    }
+
+                    // Detatch previous handler to prevent handlers from stacking when changing settings
+                    CompositionTarget.Rendering -= ScrollTextFrame;
+                    _isScrolling = false;
 
                     _isScrolling = true;
                     CompositionTarget.Rendering += ScrollTextFrame;
@@ -218,10 +221,22 @@ namespace SEA1OnTop
                }
 
                double speed = 2;
-               _textPosition += speed;
+               if (_currentSettings.TextScrollDirection == ScrollDirection.RightToLeft)
+               {
+                    _textPosition -= speed;
+                    if (_textPosition < -_textBlock.DesiredSize.Width)
+                         _textPosition = ActualWidth;
+               }
+               else 
+               {
+                    _textPosition += speed;
+                    if (_textPosition > ActualWidth)
+                         _textPosition = -_textBlock.DesiredSize.Width;
+               }
+               //_textPosition += speed;
 
-               if (_textPosition > ActualWidth)
-                    _textPosition = -_textBlock.DesiredSize.Width;
+               //if (_textPosition > ActualWidth)
+               //     _textPosition = -_textBlock.DesiredSize.Width;
 
                Canvas.SetLeft(_textBlock, _textPosition);
                Canvas.SetTop(_textBlock, (ActualHeight - _textBlock.DesiredSize.Height) / 2);
