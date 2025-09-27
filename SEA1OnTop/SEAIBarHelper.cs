@@ -70,8 +70,8 @@ namespace SEA1OnTop
                    HWND_TOP,
                    abd.rc.left,
                    abd.rc.top,
-                   abd.rc.right - abd.rc.left, // Width in Pixels
-                   abd.rc.bottom - abd.rc.top, // Height in Pixels
+                   abd.rc.right - abd.rc.left,
+                   abd.rc.bottom - abd.rc.top,
                    SWP_NOACTIVATE | SWP_SHOWWINDOW
                );
 
