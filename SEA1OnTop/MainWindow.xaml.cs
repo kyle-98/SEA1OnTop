@@ -14,10 +14,18 @@ namespace SEA1OnTop
           private double _textPosition = 0;
           private TextBlock _textBlock;
           private Canvas _canvas;
+
           private AppSettings _currentSettings;
+
           private DateTime _lastDateUpdate = DateTime.MinValue;
           private DispatcherTimer _dateTimer;
+
           private NotifyIcon? _trayIcon;
+
+          private LinearGradientBrush _rgbBrush;
+          private double _hueShift = 0;
+          private const int GradientSteps = 20;
+          private const double HueSpeed = 0.5;
 
 
           public MainWindow()
@@ -123,8 +131,17 @@ namespace SEA1OnTop
           {
                _currentSettings = settings;
 
-               try { Background = (SolidColorBrush)new BrushConverter().ConvertFromString(_currentSettings.BackgroundColor); }
-               catch { Background = System.Windows.Media.Brushes.Red; }
+               if (_currentSettings.UseRgbBackground)
+               {
+                    InitializeRgbBackground();
+               }
+               else
+               {
+                    try { Background = (SolidColorBrush)new BrushConverter().ConvertFromString(_currentSettings.BackgroundColor); }
+                    catch { Background = System.Windows.Media.Brushes.Red; }
+
+                    CompositionTarget.Rendering -= UpdateRgbBackground;
+               }
 
                _textBlock = new TextBlock
                {
@@ -261,6 +278,41 @@ namespace SEA1OnTop
 
                Canvas.SetLeft(_textBlock, _textPosition);
                Canvas.SetTop(_textBlock, (ActualHeight - _textBlock.DesiredSize.Height) / 2);
+          }
+
+
+          private void UpdateRgbBackground(object? sender, EventArgs e)
+          {
+               _hueShift = (_hueShift + HueSpeed) % 360;
+
+               for (int i = 0; i <= GradientSteps; i++)
+               {
+                    double offset = (double)i / GradientSteps;
+                    double hue = (offset * 360 + _hueShift) % 360;
+                    _rgbBrush.GradientStops[i].Color = Helpers.FromHSV(hue, 1, 1);
+               }
+          }
+
+
+          private void InitializeRgbBackground()
+          {
+               _rgbBrush = new LinearGradientBrush
+               {
+                    StartPoint = new System.Windows.Point(0, 0),
+                    EndPoint = new System.Windows.Point(1, 0),
+                    MappingMode = BrushMappingMode.RelativeToBoundingBox
+               };
+
+               for (int i = 0; i <= GradientSteps; i++)
+               {
+                    double offset = (double)i / GradientSteps;
+                    _rgbBrush.GradientStops.Add(new GradientStop(Helpers.FromHSV(offset * 360, 1, 1), offset));
+               }
+
+               Background = _rgbBrush;
+
+               CompositionTarget.Rendering -= UpdateRgbBackground;
+               CompositionTarget.Rendering += UpdateRgbBackground;
           }
      }
 }

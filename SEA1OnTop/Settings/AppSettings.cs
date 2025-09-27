@@ -21,6 +21,7 @@ namespace SEA1OnTop.Settings
           public int FontSize { get; set; } = 16;
           public string TextColor { get; set; } = "#FFFFFFFF";
           public ScrollDirection TextScrollDirection { get; set; } = ScrollDirection.RightToLeft;
+          public bool UseRgbBackground { get; set; } = false;
 
      }
 

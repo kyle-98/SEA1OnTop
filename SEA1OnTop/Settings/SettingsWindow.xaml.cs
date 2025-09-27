@@ -53,6 +53,8 @@ namespace SEA1OnTop
                          _settings.TextScrollDirection = direction;
                     }
 
+                    _settings.UseRgbBackground = RGBBackgroundCheckBox.IsChecked ?? false;
+
                     _settings.FontFamilyName = FontComboBox.Text;
                     _settings.TextColor = TextColorTextBox.Text;
 
