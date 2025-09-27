@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEA1OnTop", "SEA1OnTop\SEA1OnTop.csproj", "{063E66A1-F02B-4EC9-BC5A-D35C1C0A365F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{063E66A1-F02B-4EC9-BC5A-D35C1C0A365F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{063E66A1-F02B-4EC9-BC5A-D35C1C0A365F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{063E66A1-F02B-4EC9-BC5A-D35C1C0A365F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{063E66A1-F02B-4EC9-BC5A-D35C1C0A365F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {09A95153-E64E-4F71-9EE1-B18CF197F50B}
+	EndGlobalSection
+EndGlobal
