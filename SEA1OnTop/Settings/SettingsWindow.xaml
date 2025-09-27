@@ -28,6 +28,12 @@
                <TextBlock Text="Text to display:" Margin="0,10,0,0"/>
                <TextBox Name="DisplayTextBox" />
 
+               <TextBlock Text="Font:" Margin="0,10,0,0"/>
+               <ComboBox Name="FontComboBox" IsEditable="True" Width="250" Margin="0,5,0,0" />
+
+               <TextBlock Text="Font Size:" Margin="0,10,0,0"/>
+               <TextBox Name="FontSizeTextBox" Width="100" Margin="0,5,0,0"/>
+
                <TextBlock Text="Monitor:" Margin="0,10,0,0"/>
                <ComboBox Name="MonitorComboBox" Width="250" Margin="0,5,0,0"/>
 

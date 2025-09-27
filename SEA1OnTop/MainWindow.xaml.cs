@@ -55,7 +55,6 @@ namespace SEA1OnTop
                SEAIBarHelper.UnregisterBar(this);
           }
 
-
           private void ShowContextMenu(MouseButtonEventArgs e)
           {
                var contextMenu = new ContextMenu();
@@ -82,12 +81,9 @@ namespace SEA1OnTop
           }
 
           
-
-          public void ApplySettings(AppSettings settings, int? oldBarHeight = null)
+          public void ApplySettings(AppSettings settings)
           {
                _currentSettings = settings;
-
-               
 
                if (_isScrolling)
                {
@@ -104,6 +100,9 @@ namespace SEA1OnTop
                     Foreground = System.Windows.Media.Brushes.White,
                     FontSize = 16
                };
+
+               _textBlock.FontFamily = new System.Windows.Media.FontFamily(settings.FontFamilyName);
+               _textBlock.FontSize = settings.FontSize;
 
                if (_currentSettings.ScrollText)
                {
@@ -129,11 +128,6 @@ namespace SEA1OnTop
                Screen? screen = Helpers.GetScreen(_currentSettings.MonitorIndex);
 
                SEAIBarHelper.RegisterBar(this, _currentSettings.BarHeight, screen.Bounds.Left, screen.Bounds.Top, screen.Bounds.Width);
-
-               if (oldBarHeight.HasValue && oldBarHeight.Value != _currentSettings.BarHeight)
-               {
-                    System.Windows.MessageBox.Show("Bar height changes require restarting the application to apply.", "Restart Required", MessageBoxButton.OK, MessageBoxImage.Information);
-               }
           }
 
 

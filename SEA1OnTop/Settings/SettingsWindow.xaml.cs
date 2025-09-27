@@ -1,6 +1,7 @@
 ﻿using SEA1OnTop.Settings;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace SEA1OnTop
 {
@@ -19,8 +20,10 @@ namespace SEA1OnTop
                BackgroundColorTextBox.Text = _settings.BackgroundColor;
                DisplayTextBox.Text = _settings.Text;
                ScrollTextCheckBox.IsChecked = _settings.ScrollText;
+               FontSizeTextBox.Text = _settings.FontSize.ToString();
 
                PopulateMonitorDropdown();
+               PopulateFontComboBox();
           }
 
           private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -42,9 +45,15 @@ namespace SEA1OnTop
                          _settings.MonitorIndex = MonitorComboBox.SelectedIndex;
                     }
 
+                    _settings.FontFamilyName = FontComboBox.Text;
+
+                    if (!int.TryParse(FontSizeTextBox.Text, out int size))
+                         size = 16;
+                    _settings.FontSize = Math.Max(1, size);
+
                     SettingsManager.Save(_settings);
 
-                    _barWindow.ApplySettings(_settings, oldHeight);
+                    _barWindow.ApplySettings(_settings);
 
                     System.Windows.MessageBox.Show("Settings saved successfully!");
 
@@ -101,6 +110,17 @@ namespace SEA1OnTop
                }
                try { MonitorComboBox.SelectedIndex = _settings.MonitorIndex; }
                catch { MonitorComboBox.SelectedIndex = 0; }
+          }
+
+          private void PopulateFontComboBox()
+          {
+               FontComboBox.Items.Clear();
+               foreach (var fontFamily in Fonts.SystemFontFamilies.OrderBy(f => f.Source))
+               {
+                    FontComboBox.Items.Add(fontFamily.Source);
+               }
+
+               FontComboBox.Text = _settings.FontFamilyName;
           }
      }
 }

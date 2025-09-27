@@ -10,6 +10,9 @@ namespace SEA1OnTop.Settings
           public string Text { get; set; } = "Kronichiwa!";
           public bool ScrollText { get; set; } = false;
           public int MonitorIndex { get; set; } = 0;
+          public string FontFamilyName { get; set; } = "Segoe UI";
+          public int FontSize { get; set; } = 16;
+
      }
 
      public static class SettingsManager
