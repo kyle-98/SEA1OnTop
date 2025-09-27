@@ -14,10 +14,10 @@ namespace SEA1OnTop
           private double _textPosition = 0;
           private TextBlock _textBlock;
           private Canvas _canvas;
-          private bool _isScrolling = false;
           private AppSettings _currentSettings;
           private DateTime _lastDateUpdate = DateTime.MinValue;
           private DispatcherTimer _dateTimer;
+          private NotifyIcon? _trayIcon;
 
 
           public MainWindow()
@@ -39,6 +39,26 @@ namespace SEA1OnTop
                };
                _dateTimer.Tick += (s, e) => UpdateTextBlockContent();
                _dateTimer.Start();
+
+               _trayIcon = new NotifyIcon
+               {
+                    Icon = new Icon("Assets/sea1_logo.ico"), 
+                    Visible = true,
+                    Text = "SEA1OnTop"
+               };
+
+               var trayMenu = new ContextMenuStrip();
+               trayMenu.Items.Add("Settings", null, (s, e) =>
+               {
+                    var settings = new SettingsWindow(this)
+                    {
+                         Owner = this
+                    };
+                    settings.ShowDialog();
+               });
+               trayMenu.Items.Add("Exit", null, (s, e) => CloseApplication());
+               _trayIcon.ContextMenuStrip = trayMenu;
+               ShowInTaskbar = false;
           }
 
 
@@ -50,6 +70,8 @@ namespace SEA1OnTop
 
                ApplySettings(settings);
           }
+
+          private void CloseApplication() => System.Windows.Application.Current.Shutdown();
 
 
           private void Bar_MouseDown(object sender, MouseButtonEventArgs e)
@@ -63,6 +85,12 @@ namespace SEA1OnTop
           private void OnClosing(object? sender, CancelEventArgs e)
           {
                SEAIBarHelper.UnregisterBar(this);
+               if (_trayIcon != null)
+               {
+                    _trayIcon.Visible = false;
+                    _trayIcon.Dispose();
+                    _trayIcon = null;
+               }
           }
 
           private void ShowContextMenu(MouseButtonEventArgs e)
@@ -127,9 +155,6 @@ namespace SEA1OnTop
 
                     // Detatch previous handler to prevent handlers from stacking when changing settings
                     CompositionTarget.Rendering -= ScrollTextFrame;
-                    _isScrolling = false;
-
-                    _isScrolling = true;
                     CompositionTarget.Rendering += ScrollTextFrame;
                }
                else
@@ -233,10 +258,6 @@ namespace SEA1OnTop
                     if (_textPosition > ActualWidth)
                          _textPosition = -_textBlock.DesiredSize.Width;
                }
-               //_textPosition += speed;
-
-               //if (_textPosition > ActualWidth)
-               //     _textPosition = -_textBlock.DesiredSize.Width;
 
                Canvas.SetLeft(_textBlock, _textPosition);
                Canvas.SetTop(_textBlock, (ActualHeight - _textBlock.DesiredSize.Height) / 2);
