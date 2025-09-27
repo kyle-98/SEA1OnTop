@@ -20,6 +20,7 @@ namespace SEA1OnTop
                BackgroundColorTextBox.Text = _settings.BackgroundColor;
                DisplayTextBox.Text = _settings.Text;
                ScrollTextCheckBox.IsChecked = _settings.ScrollText;
+               RGBBackgroundCheckBox.IsChecked = _settings.UseRgbBackground;
                FontSizeTextBox.Text = _settings.FontSize.ToString();
                TextColorTextBox.Text = _settings.TextColor.ToString();
                ScrollDirectionComboBox.SelectedIndex = _settings.TextScrollDirection == ScrollDirection.RightToLeft ? 0 : 1;
@@ -53,7 +54,7 @@ namespace SEA1OnTop
                          _settings.TextScrollDirection = direction;
                     }
 
-                    _settings.UseRgbBackground = RGBBackgroundCheckBox.IsChecked ?? false;
+                    _settings.UseRgbBackground = RGBBackgroundCheckBox.IsChecked == true;
 
                     _settings.FontFamilyName = FontComboBox.Text;
                     _settings.TextColor = TextColorTextBox.Text;
