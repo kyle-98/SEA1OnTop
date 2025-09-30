@@ -77,6 +77,34 @@ namespace SEA1OnTop
                }
           }
 
+          private void ResetButton_Click(object sender, RoutedEventArgs e)
+          {
+               _settings.BarHeight = 40;
+               _settings.BackgroundColor = "#FF0000";
+               _settings.Text = "Kronichiwa!";
+               _settings.ScrollText = false;
+               _settings.MonitorIndex = 0;
+               _settings.FontFamilyName = "Segoe UI";
+               _settings.FontSize = 16;
+               _settings.TextColor = "#FFFFFFFF";
+               _settings.TextScrollDirection = ScrollDirection.RightToLeft;
+               _settings.UseRgbBackground = false;
+
+               SettingsManager.Save(_settings);
+               _barWindow.ApplySettings(_settings);
+
+               BarHeightTextBox.Text = _settings.BarHeight.ToString();
+               BackgroundColorTextBox.Text = _settings.BackgroundColor;
+               DisplayTextBox.Text = _settings.Text;
+               ScrollTextCheckBox.IsChecked = _settings.ScrollText;
+               RGBBackgroundCheckBox.IsChecked = _settings.UseRgbBackground;
+               FontSizeTextBox.Text = _settings.FontSize.ToString();
+               TextColorTextBox.Text = _settings.TextColor.ToString();
+               ScrollDirectionComboBox.SelectedIndex = _settings.TextScrollDirection == ScrollDirection.RightToLeft ? 0 : 1;
+               
+               System.Windows.MessageBox.Show("Successfully reset settings");
+          }
+
           private void CloseButton_Click(object sender, RoutedEventArgs e)
           {
                Close();
