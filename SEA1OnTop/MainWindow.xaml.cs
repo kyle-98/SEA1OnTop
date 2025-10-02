@@ -1,6 +1,7 @@
 ﻿using SEA1OnTop.Settings;
 using SEA1OnTop.Utils;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -26,6 +27,9 @@ namespace SEA1OnTop
           private double _hueShift = 0;
           private const int GradientSteps = 20;
           private const double HueSpeed = 0.5;
+
+          private Stopwatch _scrollStopwatch = new Stopwatch();
+          private double _lastFrameTime = 0;
 
 
           public MainWindow()
@@ -150,7 +154,7 @@ namespace SEA1OnTop
                     FontSize = _currentSettings.FontSize,
                     FontFamily = new System.Windows.Media.FontFamily(_currentSettings.FontFamilyName)
                };
-               
+
 
                if (_currentSettings.ScrollText)
                {
@@ -162,16 +166,14 @@ namespace SEA1OnTop
                     double textWidth = _textBlock.DesiredSize.Width;
 
                     if (_currentSettings.TextScrollDirection == ScrollDirection.RightToLeft)
-                    {
                          _textPosition = ActualWidth;
-                    }
                     else
-                    {
                          _textPosition = -textWidth;
-                    }
 
-                    // Detatch previous handler to prevent handlers from stacking when changing settings
+                    // Reset stopwatch + detach previous handler
                     CompositionTarget.Rendering -= ScrollTextFrame;
+                    _scrollStopwatch.Restart();
+                    _lastFrameTime = 0;
                     CompositionTarget.Rendering += ScrollTextFrame;
                }
                else
@@ -179,6 +181,8 @@ namespace SEA1OnTop
                     Content = _textBlock;
                     _textBlock.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
                     _textBlock.VerticalAlignment = VerticalAlignment.Center;
+                    CompositionTarget.Rendering -= ScrollTextFrame;
+                    _scrollStopwatch.Reset();
                }
 
                UpdateTextBlockContent();
@@ -256,28 +260,37 @@ namespace SEA1OnTop
           {
                if (_textBlock == null || _canvas == null) return;
 
-               if ((DateTime.Now - _lastDateUpdate).TotalSeconds >= 1)
-               {
-                    _lastDateUpdate = DateTime.Now;
-                    UpdateTextBlockContent();
-               }
+               double now = _scrollStopwatch.Elapsed.TotalSeconds;
+               double delta = now - _lastFrameTime;
+               _lastFrameTime = now;
 
-               double speed = 2;
+               if (delta <= 0) return;
+
+               double speed = _currentSettings.ScrollSpeed;
+
+               double step = speed * delta;
+
                if (_currentSettings.TextScrollDirection == ScrollDirection.RightToLeft)
                {
-                    _textPosition -= speed;
+                    _textPosition -= step;
                     if (_textPosition < -_textBlock.DesiredSize.Width)
                          _textPosition = ActualWidth;
                }
-               else 
+               else
                {
-                    _textPosition += speed;
+                    _textPosition += step;
                     if (_textPosition > ActualWidth)
                          _textPosition = -_textBlock.DesiredSize.Width;
                }
 
                Canvas.SetLeft(_textBlock, _textPosition);
                Canvas.SetTop(_textBlock, (ActualHeight - _textBlock.DesiredSize.Height) / 2);
+
+               if ((DateTime.Now - _lastDateUpdate).TotalSeconds >= 1)
+               {
+                    _lastDateUpdate = DateTime.Now;
+                    UpdateTextBlockContent();
+               }
           }
 
 

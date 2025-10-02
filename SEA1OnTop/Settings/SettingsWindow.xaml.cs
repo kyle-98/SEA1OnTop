@@ -24,6 +24,7 @@ namespace SEA1OnTop
                FontSizeTextBox.Text = _settings.FontSize.ToString();
                TextColorTextBox.Text = _settings.TextColor.ToString();
                ScrollDirectionComboBox.SelectedIndex = _settings.TextScrollDirection == ScrollDirection.RightToLeft ? 0 : 1;
+               ScrollSpeedTextBox.Text = _settings.ScrollSpeed.ToString();
 
                PopulateMonitorDropdown();
                PopulateFontComboBox();
@@ -63,6 +64,10 @@ namespace SEA1OnTop
                          size = 16;
                     _settings.FontSize = Math.Max(1, size);
 
+                    if (!int.TryParse(ScrollSpeedTextBox.Text, out int speed))
+                         speed = 100;
+                    _settings.ScrollSpeed = speed;
+
                     SettingsManager.Save(_settings);
 
                     _barWindow.ApplySettings(_settings);
@@ -89,6 +94,7 @@ namespace SEA1OnTop
                _settings.TextColor = "#FFFFFFFF";
                _settings.TextScrollDirection = ScrollDirection.RightToLeft;
                _settings.UseRgbBackground = false;
+               _settings.ScrollSpeed = 100;
 
                SettingsManager.Save(_settings);
                _barWindow.ApplySettings(_settings);
@@ -101,6 +107,7 @@ namespace SEA1OnTop
                FontSizeTextBox.Text = _settings.FontSize.ToString();
                TextColorTextBox.Text = _settings.TextColor.ToString();
                ScrollDirectionComboBox.SelectedIndex = _settings.TextScrollDirection == ScrollDirection.RightToLeft ? 0 : 1;
+               ScrollSpeedTextBox.Text = _settings.ScrollSpeed.ToString();
                
                System.Windows.MessageBox.Show("Successfully reset settings");
           }

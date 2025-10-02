@@ -22,6 +22,7 @@ namespace SEA1OnTop.Settings
           public string TextColor { get; set; } = "#FFFFFFFF";
           public ScrollDirection TextScrollDirection { get; set; } = ScrollDirection.RightToLeft;
           public bool UseRgbBackground { get; set; } = false;
+          public double ScrollSpeed { get; set; } = 100;
 
      }
 
